@@ -1,91 +1,114 @@
-import { useState } from "react";
 import {
   FaReact, FaNodeJs, FaHtml5, FaCss3Alt, FaJsSquare,
-  FaGit, FaServer, FaMicrosoft 
+  FaGit, FaGithub, FaServer, FaMicrosoft, FaDatabase
 } from "react-icons/fa";
 import {
   SiMongodb, SiTailwindcss, SiBootstrap,
-  SiExpress,SiTypescript, SiNextdotjs, SiDotnet 
-  
-} from "react-icons/si";;
+  SiExpress, SiTypescript, SiNextdotjs, SiDotnet, SiMui
+} from "react-icons/si";
 import { IoIosColorPalette } from "react-icons/io";
+import { TbApi } from "react-icons/tb";
+import SectionHeading from "./SectionHeading";
+import Reveal from "./Reveal";
+
+const skillGroups = [
+  {
+    category: "Frontend",
+    code: "FE",
+    skills: [
+      { name: "React Js", icon: FaReact, color: "#61dafb" },
+      { name: "Next Js", icon: SiNextdotjs, color: "#ffffff" },
+      { name: "TypeScript", icon: SiTypescript, color: "#4f9cf0" },
+      { name: "JavaScript", icon: FaJsSquare, color: "#f7df1e" },
+      { name: "HTML", icon: FaHtml5, color: "#f16529" },
+      { name: "CSS", icon: FaCss3Alt, color: "#4aa8f0" },
+      { name: "Tailwind CSS", icon: SiTailwindcss, color: "#38bdf8" },
+      { name: "Material UI", icon: SiMui, color: "#3d9bff" },
+      { name: "Bootstrap", icon: SiBootstrap, color: "#a078f0" },
+    ],
+  },
+  {
+    category: "Backend",
+    code: "BE",
+    skills: [
+      { name: "Node.js", icon: FaNodeJs, color: "#7cc35a" },
+      { name: "Express.js", icon: SiExpress, color: "#c9ced8" },
+      { name: "REST APIs", icon: TbApi, color: "#5ee6ff" },
+      { name: "C#", icon: SiDotnet, color: "#9b7bf0" },
+    ],
+  },
+  {
+    category: "Database",
+    code: "DB",
+    skills: [
+      { name: "MongoDB", icon: SiMongodb, color: "#4db33d" },
+      { name: "SSMS", icon: FaDatabase, color: "#f0605a" },
+    ],
+  },
+  {
+    category: "Tools & Other",
+    code: "OPS",
+    skills: [
+      { name: "Git", icon: FaGit, color: "#f1502f" },
+      { name: "GitHub", icon: FaGithub, color: "#ffffff" },
+      { name: "TFS", icon: FaMicrosoft, color: "#4f9cf0" },
+      { name: "Server Deployment", icon: FaServer, color: "#c9ced8" },
+      { name: "Color Theory", icon: IoIosColorPalette, color: "#f06fa8" },
+    ],
+  },
+];
 
 function Skills() {
-  const skills = [
-    { name: "MongoDB", icon: SiMongodb, level: 80, color: "text-green-700", category: "Database" },
-    { name: "Express.js", icon: SiExpress, level: 85, color: "text-gray-500", category: "Backend" },
-    { name: "React Js", icon: FaReact, level: 90, color: "text-blue-500", category: "Frontend" },
-    { name: "Node.js", icon: FaNodeJs, level: 85, color: "text-green-500", category: "Backend" },
-    { name: "Next Js", icon: SiNextdotjs, level: 70, color: "text-white", category: "Frontend" },
-    { name: "TypeScript", icon: SiTypescript, level: 75, color: "text-blue-600", category: "Frontend" },
-    { name: "JavaScript", icon: FaJsSquare, level: 90, color: "text-yellow-500", category: "Frontend" },
-    { name: "Tailwind CSS", icon: SiTailwindcss, level: 85, color: "text-cyan-500", category: "Frontend" },
-    { name: "Bootstrap", icon: SiBootstrap, level: 85, color: "text-purple-500", category: "Frontend" },
-    { name: "HTML", icon: FaHtml5, level: 95, color: "text-orange-500", category: "Frontend" },
-    { name: "CSS", icon: FaCss3Alt, level: 90, color: "text-blue-600", category: "Frontend" },
-    { name: "C#", icon: SiDotnet, level: 90, color: "text-blue-600" },
-   
-    { name: "SSMS",icon: FaServer,level: 80,color: "text-red-500",category: "Database",},
-    { name: "TFS", icon: FaMicrosoft, level: 75, color: "text-blue-500", category: "Other" },
-    { name: "Git", icon: FaGit, level: 85, color: "text-red-500", category: "Other" },
-    { name: "Color Theory", icon: IoIosColorPalette, level: 70, color: "text-pink-500", category: "Other" },
-    { name: "Server Deployment", icon: FaServer, level: 80, color: "text-gray-700", category: "Other" },
-  ];
-
-  const categories = ["All", "Frontend", "Backend", "Database", "Other"];
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  const filteredSkills = selectedCategory === "All"
-    ? skills
-    : skills.filter(skill => skill.category === selectedCategory);
-
   return (
-    <section id="skills" className="py-20 bg-gray-50 dark:bg-gray-800 transition-colors">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 dark:text-white animate-fade-in">Skills</h2>
+    <section id="skills" className="scroll-mt-16 px-5 py-24 sm:px-8">
+      <div className="mx-auto max-w-6xl">
+        <SectionHeading
+          index="02"
+          label="Technology HUD"
+          title="Skills"
+          description="The tools I build with, grouped by where they sit in the stack."
+        />
 
-        {/* Dropdown Filter */}
-      <div className="mb-6 flex flex-col md:flex-row items-center justify-center gap-4">
-  <p className="text-lg font-semibold text-gray-800 dark:text-white">Filter:</p>
-  <div className="relative w-64">
-    <select
-      value={selectedCategory}
-      onChange={(e) => setSelectedCategory(e.target.value)}
-      className="w-full px-4 py-2 text-base font-medium rounded-xl border border-gray-300 dark:border-gray-700 shadow-md bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out appearance-none"
-    >
-      {categories.map((category) => (
-        <option key={category} value={category}>
-          {category}
-        </option>
-      ))}
-    </select>
-    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400">
-      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
-  </div>
-</div>
-
-
-
-        {/* Skills Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {filteredSkills.map((skill, index) => (
-            <div
-              key={skill.name}
-              className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md flex flex-col items-center justify-center animate-scale-in hover:shadow-lg transition-all"
-              style={{ animationDelay: `${index * 100}ms` }}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {skillGroups.map((group, groupIndex) => (
+            <Reveal
+              key={group.category}
+              delay={groupIndex * 0.08}
+              className={groupIndex === 0 ? "lg:col-span-2" : ""}
             >
-              <skill.icon className={`w-12 h-12 mb-4 ${skill.color}`} />
-              <h3 className="text-xl font-semibold text-center mb-4 dark:text-white">{skill.name}</h3>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                <div
-                  className="h-2.5 rounded-full transition-all duration-1000"
-                  style={{ width: `${skill.level}%`, backgroundColor: "currentColor" }}
-                ></div>
+              <div className="hud-panel h-full p-6 sm:p-7">
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="font-display text-sm font-bold uppercase tracking-[0.2em] text-white">
+                    {group.category}
+                  </h3>
+                  <span className="font-mono text-xs text-stark-muted">
+                    {group.code} / {String(group.skills.length).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <ul
+                  className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${
+                    groupIndex === 0 ? "lg:grid-cols-5" : ""
+                  }`}
+                >
+                  {group.skills.map((skill) => (
+                    <li
+                      key={skill.name}
+                      className="group flex items-center gap-3 rounded-lg border border-stark-silver/10 bg-stark-void/50 px-3.5 py-3 transition duration-300 hover:-translate-y-0.5 hover:border-stark-gold/60 hover:shadow-glow-gold"
+                    >
+                      <skill.icon
+                        aria-hidden="true"
+                        className="h-7 w-7 shrink-0 transition-transform duration-300 group-hover:scale-110"
+                        style={{ color: skill.color }}
+                      />
+                      <span className="font-semibold leading-tight text-stark-silver transition-colors group-hover:text-white">
+                        {skill.name}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

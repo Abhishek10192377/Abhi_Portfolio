@@ -1,30 +1,30 @@
-import { FaFolderOpen, FaFileAlt } from "react-icons/fa"; // Import Icons
+import { FaFolderOpen, FaFileAlt, FaPaperPlane } from "react-icons/fa"; // Import Icons
+import { profile } from "../data/profile";
 
 export default function Buttons() {
   return (
-    <div className="flex flex-col md:flex-row items-center gap-4 mt-6">
+    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       {/* View Projects Button */}
-      <a
-        href="#projects"
-        className="flex items-center gap-2 md:px-6 md:py-3 px-4 py-2 text-sm md:text-lg font-semibold rounded-lg transition-all duration-300
-        bg-indigo-600 text-white shadow-md hover:scale-105 hover:-translate-y-1 hover:shadow-lg
-        dark:bg-indigo-400 dark:text-black"
-      >
-        <FaFolderOpen className="text-xl" />
+      <a href="#projects" className="btn-stark btn-stark-primary">
+        <FaFolderOpen aria-hidden="true" className="text-base" />
         View Projects
       </a>
 
       {/* Resume Button */}
       <a
-        href="https://drive.google.com/file/d/1iNzL44vWjPjfr6KBqgPWuOXyFwF2CLl4/view?usp=sharing"
+        href={profile.resume}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-2 md:px-6 md:py-3 px-4 py-2 text-sm md:text-lg font-semibold rounded-lg transition-all duration-300
-        bg-gray-200 text-gray-800 shadow-md hover:scale-105 hover:-translate-y-1 hover:shadow-lg
-        dark:bg-gray-800 dark:text-white"
+        className="btn-stark btn-stark-gold"
       >
-        <FaFileAlt className="text-xl" />
-        Resume
+        <FaFileAlt aria-hidden="true" className="text-base" />
+        Download Resume
+      </a>
+
+      {/* Contact Button */}
+      <a href="#contact" className="btn-stark btn-stark-ghost">
+        <FaPaperPlane aria-hidden="true" className="text-base" />
+        Contact Me
       </a>
     </div>
   );

@@ -1,14 +1,13 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "./context/ThemeContext";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import { MotionConfig } from "framer-motion";
 import { Toaster } from "sonner";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./Dashboard/ProtectedRoute";
 
 // Lazy load heavy components
 const Home = lazy(() => import("./components/Home"));
+const About = lazy(() => import("./components/About"));
 const Skills = lazy(() => import("./components/Skills"));
 const Experience = lazy(() => import("./components/Experience"));
 const Projects = lazy(() => import("./components/Projects"));
@@ -16,54 +15,74 @@ const Contact = lazy(() => import("./components/Contact"));
 const Login = lazy(() => import("./Dashboard/Login"));
 const Dashboard = lazy(() => import("./Dashboard/Dashboard"));
 import CircleFollower from "./components/CircleFollower";
+import BootSequence from "./components/BootSequence";
+import Footer from "./components/Footer";
 
 // Loading placeholder (Fallback UI)
 const Loader = () => (
   <div className="flex items-center justify-center h-screen">
-    <div className="w-10 h-10 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+    <div className="w-10 h-10 border-4 border-stark-red border-t-stark-gold rounded-full animate-spin"></div>
   </div>
 );
 
-function App() {
-  useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: true,
-    });
-  }, []);
+function Portfolio() {
+  const [booted, setBooted] = useState(false);
+  const handleBooted = useCallback(() => setBooted(true), []);
 
   return (
-    <ThemeProvider>
-      <Toaster richColors position="top-right" />
+    <div className="stark-theme">
+      <div className="stark-backdrop" aria-hidden="true" />
+      <BootSequence onDone={handleBooted} />
       <CircleFollower />
+      <a
+        href="#about"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-stark-charcoal focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
+      <Navbar />
+      <Suspense fallback={<Loader />}>
+        <main>
+          <Home ready={booted} />
+          <About />
+          <Skills />
+          <Projects />
+          <Experience />
+          <Contact />
+        </main>
+        <Footer />
+      </Suspense>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <MotionConfig reducedMotion="user">
+      <Toaster richColors theme="dark" position="top-right" />
       <Routes>
+        <Route path="/" element={<Portfolio />}></Route>
         <Route
-          path="/"
+          path="/login"
           element={
-            <div className="bg-white dark:bg-gray-900 transition-colors">
-              <Navbar />
-              <Suspense fallback={<Loader />}>
-                <Home />
-                <Experience />
-                <Projects />
-                <Skills />
-                <Contact />
-              </Suspense>
-            </div>
+            <Suspense fallback={<Loader />}>
+              <Login />
+            </Suspense>
           }
-        ></Route>
-        <Route path="/login" element={<Login />} />
+        />
         <Route
           path="/dashboard/*"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Suspense fallback={<Loader />}>
+                <Dashboard />
+              </Suspense>
             </ProtectedRoute>
           }
         />
         <Route path="/*" element={<Navigate to="/" replace />} />
       </Routes>
-    </ThemeProvider>
+    </MotionConfig>
   );
 }
 

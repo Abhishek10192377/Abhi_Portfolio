@@ -5,150 +5,228 @@ import {
   FaEnvelope,
   FaPhone,
 } from "react-icons/fa";
-import HeroImg from "../assets/HeroImg.webp";
 import { useEffect, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Buttons from "./Buttons";
+import ArcReactor from "./ArcReactor";
+import { profile } from "../data/profile";
 
-function Home() {
- const skills = [ "Software Developer","React.js Developer","Next.js Developer","Frontend Developer","Full Stack Developer"];
+const skills = [
+  "Software Developer",
+  "React.js Developer",
+  "Next.js Developer",
+  "Frontend Developer",
+  "Full Stack Developer",
+];
+
+const socials = [
+  { icon: FaGithub, link: profile.github, label: "GitHub" },
+  { icon: FaLinkedin, link: profile.linkedin, label: "LinkedIn" },
+  { icon: FaInstagram, link: profile.instagram, label: "Instagram" },
+  { icon: FaEnvelope, link: `mailto:${profile.email}`, label: "Email" },
+  { icon: FaPhone, link: `tel:${profile.phone}`, label: "Phone" },
+];
+
+const hudReadouts = [
+  {
+    label: "Current role",
+    value: profile.role,
+    position: "-left-4 top-[3%] lg:-left-10",
+    delay: 0.9,
+  },
+  {
+    label: "Core stack",
+    value: "Next.js / React / TypeScript",
+    position: "-right-4 bottom-[14%] lg:-right-8",
+    delay: 1.1,
+  },
+  {
+    label: "Writing code since",
+    value: "2022",
+    position: "-left-2 bottom-[1%]",
+    delay: 1.3,
+  },
+];
+
+const particles = [
+  { left: "12%", top: "70%", color: "#f5cf6b", delay: "0s" },
+  { left: "28%", top: "88%", color: "#5ee6ff", delay: "2.5s" },
+  { left: "64%", top: "92%", color: "#e11d2e", delay: "1.2s" },
+  { left: "82%", top: "74%", color: "#f5cf6b", delay: "4s" },
+  { left: "90%", top: "50%", color: "#5ee6ff", delay: "6s" },
+  { left: "6%", top: "44%", color: "#e11d2e", delay: "5s" },
+];
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.11, delayChildren: 0.1 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
+};
+
+function Home({ ready = true }) {
+  const reduceMotion = useReducedMotion();
   const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const currentSkill = skills[index];
+    if (!ready || reduceMotion) return;
 
-    const typeSpeed = isDeleting ? 100 : 200; // Faster when deleting
+    const currentSkill = skills[index];
+    const typed = !isDeleting && text === currentSkill;
+    const cleared = isDeleting && text === "";
+    const delay = typed ? 1600 : isDeleting ? 45 : 95; // Faster when deleting
 
     const timeout = setTimeout(() => {
-      if (isDeleting) {
-        setText((prev) => prev.slice(0, -1));
-      } else {
-        setText((prev) => currentSkill.slice(0, prev.length + 1));
-      }
-
-      // When typing is done
-      if (!isDeleting && text === currentSkill) {
-        setTimeout(() => setIsDeleting(true), 1000); // Wait 1 sec, then start deleting
-      }
-      // When deleting is done
-      else if (isDeleting && text === "") {
+      if (typed) {
+        setIsDeleting(true);
+      } else if (cleared) {
         setIsDeleting(false);
         setIndex((prevIndex) => (prevIndex + 1) % skills.length); // Go to next word
+      } else {
+        setText(currentSkill.slice(0, text.length + (isDeleting ? -1 : 1)));
       }
-    }, typeSpeed);
+    }, delay);
 
     return () => clearTimeout(timeout);
-  }, [text, isDeleting, index, skills]);
+  }, [text, isDeleting, index, ready, reduceMotion]);
+
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center pt-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4 sm:px-8 md:px-12 lg:px-24"
+      className="relative flex min-h-screen items-center px-5 pb-16 pt-28 sm:px-8"
     >
-      <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+      <motion.div
+        className="mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]"
+        variants={container}
+        initial="hidden"
+        animate={ready ? "show" : "hidden"}
+      >
         {/* Left Column - Text Content */}
-        <div className="flex-1 space-y-6 text-center lg:text-left animate-fade-in-up">
-          <div className="space-y-2 ">
-            <p className="text-lg text-blue-600 dark:text-blue-400 font-medium">
-              Hello, I'm
-            </p>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Abhishek Kumar
-            </h1>
-            <p className="text-xl sm:text-2xl h-12 text-gray-600 dark:text-gray-300 font-medium">
-              {text}
-              <span className="animate-blink">|</span>
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto lg:mx-0">
-              Crafting digital experiences with modern web technologies.
-              Specializing in Full stack web development .
-            </p>
-          </div>
-             <Buttons />
+        <div className="space-y-7 text-center lg:text-left">
+          <motion.p variants={item} className="hud-label flex items-center justify-center gap-3 lg:justify-start">
+            <span className="status-dot h-1.5 w-1.5 rounded-full bg-stark-cyan" />
+            Hello, I&apos;m
+          </motion.p>
+
+          <motion.h1
+            variants={item}
+            className="text-metal font-display text-4xl font-black uppercase leading-[1.05] tracking-wide sm:text-6xl xl:text-7xl"
+          >
+            {profile.name}
+          </motion.h1>
+
+          <motion.p
+            variants={item}
+            className="flex h-9 items-center justify-center font-display text-lg font-semibold uppercase tracking-[0.14em] text-stark-amber sm:text-2xl lg:justify-start"
+          >
+            <span className="mr-3 text-stark-red" aria-hidden="true">&gt;</span>
+            {/* Screen readers get the stable title instead of every keystroke */}
+            <span className="sr-only">{skills[0]}</span>
+            <span aria-hidden="true">
+              {reduceMotion ? skills[0] : text}
+              <span className="animate-blink ml-0.5 text-stark-cyan">_</span>
+            </span>
+          </motion.p>
+
+          <motion.p
+            variants={item}
+            className="mx-auto max-w-xl text-lg leading-relaxed text-stark-silver lg:mx-0"
+          >
+            Crafting digital experiences with modern web technologies.
+            Specializing in full stack web development. Currently an{" "}
+            <span className="text-white">{profile.role}</span> at Lovely
+            Professional University, building the Student UMS with Next.js,
+            React.js, TypeScript and Material UI.
+          </motion.p>
+
+          <motion.div variants={item} className="flex justify-center lg:justify-start">
+            <Buttons />
+          </motion.div>
+
           {/* Social Links */}
-          <div className="flex justify-center lg:justify-start space-x-6">
-            {[
-              {
-                icon: <FaGithub />,
-                color: "hover:text-gray-800 dark:hover:text-white",
-                link: "https://github.com/Abhishek10192377",
-                label: "GitHub",
-              },
-              {
-                icon: <FaLinkedin />,
-                color: "hover:text-blue-600",
-                link: "https://www.linkedin.com/in/mudasir143/",
-                label: "LinkedIn",
-              },
-              {
-                icon: <FaInstagram />,
-                color: "hover:text-pink-500",
-                link: "https://www.instagram.com/silentframes_64?stkn=bWp3MjVhaHcyOWc1",
-                label: "Instagram",
-              },
-              {
-                icon: <FaEnvelope />,
-                color: "hover:text-red-500",
-                link: "mailto:abhisheksahni0077@gmail.com",
-                label: "Email",
-              },
-              {
-                icon: <FaPhone className="rotate-" />,
-                color: "hover:text-green-500",
-                link: "tel:+916284572866",
-                label: "Phone",
-              },
-            ].map((item, index) => (
-              <a
-                key={index}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={item.label}
-                className={`relative group text-gray-600 dark:text-gray-300 text-2xl transition-all duration-300 transform hover:scale-125 ${item.color}`}
-              >
-                {item.icon}
-                <span className="absolute bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {item.label}
-                </span>
-              </a>
+          <motion.ul variants={item} className="flex justify-center gap-3 lg:justify-start">
+            {socials.map(({ icon: Icon, link, label }) => (
+              <li key={label}>
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className="grid h-11 w-11 place-items-center rounded-md border border-stark-silver/15 bg-stark-charcoal/60 text-lg text-stark-silver transition duration-300 hover:-translate-y-1 hover:border-stark-gold/70 hover:text-stark-amber hover:shadow-glow-gold"
+                >
+                  <Icon aria-hidden="true" />
+                </a>
+              </li>
             ))}
-          </div>
-        
+          </motion.ul>
         </div>
 
-        {/* Right Column - Image and About Me */}
-        <div className="flex-1 flex flex-col items-center lg:items-end space-y-8 animate-fade-in-down">
-          {/* Profile Image */}
-          {/* <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 group">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-            <svg className="absolute -top-8 -left-8 w-72 h-72 text-blue-200 opacity-40" viewBox="0 0 200 200" fill="currentColor">
-              <path d="M40.5,-66.2C52.2,-59.2,61.2,-48.2,67.2,-35.8C73.2,-23.4,76.2,-9.7,74.2,3.7C72.2,17.1,65.2,30.2,56.2,41.2C47.2,52.2,36.2,61.1,23.2,66.2C10.2,71.3,-4.8,72.6,-19.2,69.2C-33.6,65.8,-47.4,57.7,-56.2,46.1C-65,34.5,-68.8,19.2,-70.2,3.1C-71.6,-13,-70.6,-29.9,-62.8,-41.7C-55,-53.5,-40.5,-60.2,-25.1,-66.2C-9.7,-72.2,6.6,-77.5,21.2,-75.2C35.8,-72.9,49.8,-63.2,40.5,-66.2Z" transform="translate(100 100)" />
-            </svg>
+        {/* Right Column - Arc reactor and helmet HUD */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, scale: 0.86 },
+            show: { opacity: 1, scale: 1, transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } },
+          }}
+          className="relative mx-auto aspect-square w-full max-w-[19rem] sm:max-w-[26rem] lg:max-w-[30rem]"
+        >
+          <div
+            aria-hidden="true"
+            className="bg-circuit absolute -inset-6 opacity-40 [mask-image:radial-gradient(circle,#000_30%,transparent_68%)]"
+          />
+          <ArcReactor className="absolute inset-0 h-full w-full" />
+
+          <div className="helmet-float absolute inset-[24%]">
             <img
-              src={HeroImg}
-              alt="Profile"
-              className="relative z-10 w-full h-full object-cover rounded-full shadow-xl transform group-hover:scale-105 transition-transform duration-300"
+              src="/assets/images/iron-man-helmet.png"
+              alt="Iron Man helmet illustration"
+              width="480"
+              height="480"
+              className="h-full w-full object-contain drop-shadow-[0_0_28px_rgba(225,29,46,0.55)]"
             />
-          </div> */}
-          <p className="mt-4 italic text-gray-500 dark:text-gray-400">
-            Turning coffee into clean code since 2022 ☕→💻
-          </p>
-          {/* About Me Card */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg transform transition-all duration-300 hover:shadow-xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">
-              About Me
-            </h3>
-            <ul className="text-gray-600 dark:text-gray-300 space-y-2">
-              <li>🚀 Full Stack Web Developer</li>
-              <li>🎨 React Enthusiast | Crafting sleek & user-friendly UIs</li>
-              <li>🎯 Problem Solver | Turning ideas into working products</li>
-              <li>🌱 Continuous Learner | Always exploring new tech</li>
-              <li>🤝 Team Player | Love collaborating & mentoring</li>
-            </ul>
+            <div aria-hidden="true" className="helmet-sheen absolute inset-0" />
           </div>
-        </div>
-      </div>
+
+          {particles.map((p) => (
+            <span
+              key={`${p.left}-${p.top}`}
+              aria-hidden="true"
+              className="hud-particle hidden sm:block"
+              style={{
+                left: p.left,
+                top: p.top,
+                background: p.color,
+                boxShadow: `0 0 8px ${p.color}`,
+                animationDelay: p.delay,
+              }}
+            />
+          ))}
+
+          {/* Floating readouts: real profile data, hidden on small screens */}
+          {hudReadouts.map((readout) => (
+            <motion.div
+              key={readout.label}
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.5, delay: readout.delay } },
+              }}
+              className={`hud-panel absolute hidden max-w-[13rem] px-4 py-3 sm:block ${readout.position}`}
+            >
+              <p className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-stark-cyan">
+                {readout.label}
+              </p>
+              <p className="mt-1 text-sm font-semibold leading-snug text-white">
+                {readout.value}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
