@@ -11,7 +11,7 @@ export const profile = {
   resume:
     "https://drive.google.com/file/d/1iNzL44vWjPjfr6KBqgPWuOXyFwF2CLl4/view?usp=sharing",
   github: "https://github.com/Abhishek10192377",
-  linkedin: "https://www.linkedin.com/in/mudasir143/",
+  linkedin: "https://www.linkedin.com/in/abhishek-sahni-6a7042308",
   instagram:
     "https://www.instagram.com/silentframes_64?stkn=bWp3MjVhaHcyOWc1",
 };
